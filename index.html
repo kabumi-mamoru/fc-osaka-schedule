@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FC OSAKA 2026/27 SCHEDULE</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Noto+Sans+JP:wght@400;700;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #000E2A;
+  --blue:       #0044BB;
+  --cyan:       #00D4FF;
+  --red:        #FF4040;
+  --white:      #FFFFFF;
+  --silver:     #A8C0E0;
+  --card-h:     #01183D;
+  --card-a:     #1A0822;
+  --sep:        rgba(255,255,255,0.06);
+}
+
+html, body {
+  background: var(--bg);
+  font-family: 'Noto Sans JP', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ─── HEADER ─── */
+.header {
+  background: linear-gradient(150deg, #000C22 0%, #003090 60%, #0044BB 100%);
+  padding: 24px 18px 18px;
+  border-bottom: 2px solid var(--cyan);
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: 'OSAKA';
+  position: absolute;
+  right: -8px; bottom: -12px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 80px;
+  font-weight: 700;
+  color: rgba(0,212,255,0.06);
+  pointer-events: none;
+  line-height: 1;
+}
+.badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.j3-pill {
+  background: var(--cyan);
+  color: #000E2A;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 10px 2px 8px;
+  clip-path: polygon(0 0,100% 0,88% 100%,0 100%);
+  letter-spacing: 1px;
+}
+.league-txt {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--silver);
+}
+.title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 38px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 0 24px rgba(0,212,255,0.3);
+}
+.title em { color: var(--cyan); font-style: normal; }
+.subtitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--silver);
+  margin-top: 5px;
+}
+
+/* ─── LEGEND ─── */
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 16px;
+  background: rgba(0,0,0,0.45);
+  border-bottom: 1px solid var(--sep);
+  flex-wrap: wrap;
+}
+.leg-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--silver);
+  letter-spacing: 1px;
+}
+.leg-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+.leg-dot.h { background: var(--cyan); }
+.leg-dot.a { background: var(--red); }
+.leg-note {
+  margin-left: auto;
+  font-size: 9.5px;
+  color: rgba(168,192,224,0.5);
+  line-height: 1.4;
+}
+
+/* ─── MONTH GROUP ─── */
+.month-block { padding: 0 14px; }
+.month-hd {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--cyan);
+  padding: 13px 2px 5px;
+  border-bottom: 1px solid rgba(0,212,255,0.18);
+  margin-bottom: 5px;
+  opacity: 0.75;
+}
+
+/* ─── CARD ─── */
+.card {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.card-bar {
+  width: 3px;
+  flex-shrink: 0;
+}
+.card.h .card-bar { background: var(--cyan); }
+.card.a .card-bar { background: var(--red); }
+
+.card-inner {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 52px 1px 108px 1fr;
+  align-items: center;
+  padding: 11px 12px 11px 10px;
+  gap: 10px;
+  min-width: 0;
+}
+.card.h .card-inner { background: var(--card-h); }
+.card.a .card-inner { background: var(--card-a); }
+
+/* 節 + badge */
+.card-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.node-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+.node-label {
+  font-size: 9px;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 1px;
+}
+.ha {
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+.ha.h {
+  color: var(--cyan);
+  background: rgba(0,212,255,0.12);
+  border: 1px solid rgba(0,212,255,0.3);
+}
+.ha.a {
+  color: var(--red);
+  background: rgba(255,64,64,0.12);
+  border: 1px solid rgba(255,64,64,0.3);
+}
+
+/* セパレーター */
+.vsep { background: var(--sep); align-self: stretch; }
+
+/* 日程 */
+.card-date {}
+.d1 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.d2-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+.d-or {
+  font-size: 9px;
+  color: rgba(168,192,224,0.45);
+}
+.d2 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  white-space: nowrap;
+}
+
+/* 対戦相手 */
+.card-opp {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--silver);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-left: 1px solid var(--sep);
+  padding-left: 10px;
+  line-height: 1.3;
+}
+.card-stadium {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(168,192,224,0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 3px;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+  max-width: 100%;
+}
+.card-stadium:hover, .card-stadium:active {
+  color: var(--cyan);
+  text-decoration: underline;
+}
+
+/* ─── FOOTER ─── */
+.footer {
+  margin-top: 6px;
+  padding: 14px 18px;
+  background: rgba(0,0,0,0.5);
+  border-top: 1px solid rgba(0,212,255,0.12);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.f-note { font-size: 10px; color: rgba(168,192,224,0.4); }
+.f-logo {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 3px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge-row">
+    <div class="j3-pill">J3</div>
+    <div class="league-txt">明治安田 J3 LEAGUE</div>
+  </div>
+  <div class="title">FC <em>OSAKA</em></div>
+  <div class="subtitle">2026/27 &nbsp; MATCH SCHEDULE</div>
+</div>
+
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot h"></div>HOME</div>
+  <div class="leg-item"><div class="leg-dot a"></div>AWAY</div>
+  <div class="leg-note">※土日の節は金・月曜開催の可能性あり</div>
+</div>
+
+<div id="sched"></div>
+
+<div class="footer">
+  <div class="f-note">2026.08.08 〜 2027.05.23 ｜ 全38節</div>
+  <div class="f-logo">FC OSAKA</div>
+</div>
+
+<script>
+const DATA = [
+  ["第01節","AWAY","08/08(sat)","08/09(sun)","vs.ガイナーレ鳥取"],
+  ["第02節","HOME","08/15(sat)","08/16(sun)","vs.AC長野パルセイロ"],
+  ["第03節","HOME","08/22(sat)","08/23(sun)","vs.FC琉球"],
+  ["第04節","AWAY","08/29(sat)","08/30(sun)","vs.レノファ山口FC"],
+  ["第05節","AWAY","09/05(sat)","09/06(sun)","vs.松本山雅FC"],
+  ["第06節","HOME","09/12(sat)","09/13(sun)","vs.愛媛FC"],
+  ["第07節","HOME","09/19(sat)","09/20(sun)","vs.福島ユナイテッドFC"],
+  ["第08節","AWAY","09/26(sat)",null,"vs.高知ユナイテッドSC"],
+  ["第09節","AWAY","10/03(sat)","10/04(sun)","vs.SC相模原"],
+  ["第10節","HOME","10/10(sat)","10/11(sun)","vs.ツエーゲン金沢"],
+  ["第11節","AWAY","10/17(sat)","10/18(sun)","vs.ギラヴァンツ北九州"],
+  ["第12節","HOME","10/21(wed)",null,"vs.奈良クラブ"],
+  ["第13節","HOME","10/24(sat)","10/25(sun)","vs.鹿児島ユナイテッドFC"],
+  ["第14節","AWAY","10/31(sat)",null,"vs.FC岐阜"],
+  ["第15節","HOME","11/03(tue)",null,"vs.ロアッソ熊本"],
+  ["第16節","AWAY","11/07(sat)","11/08(sun)","vs.ザスパ群馬"],
+  ["第17節","AWAY","11/14(sat)","11/15(sun)","vs.レイラック滋賀FC"],
+  ["第18節","HOME","11/21(sat)","11/22(sun)","vs.カマタマーレ讃岐"],
+  ["第19節","HOME","11/25(wed)",null,"vs.栃木SC"],
+  ["第20節","AWAY","11/28(sat)","11/29(sun)","vs.ロアッソ熊本"],
+  ["第21節","AWAY","12/05(sat)","12/06(sun)","vs.奈良クラブ"],
+  ["第22節","HOME","12/12(sat)","12/13(sun)","vs.SC相模原"],
+  ["第23節","HOME","02/20(sat)","02/21(sun)","vs.ギラヴァンツ北九州"],
+  ["第24節","AWAY","02/27(sat)","02/28(sun)","vs.カマタマーレ讃岐"],
+  ["第25節","HOME","03/06(sat)","03/07(sun)","vs.レノファ山口FC"],
+  ["第26節","AWAY","03/13(sat)","03/14(sun)","vs.FC琉球"],
+  ["第27節","AWAY","03/17(wed)",null,"vs.福島ユナイテッド"],
+  ["第28節","HOME","03/20(sat)","03/21(sun)","vs.ザスパ群馬"],
+  ["第29節","AWAY","03/27(sat)","03/28(sun)","vs.栃木SC"],
+  ["第30節","HOME","04/03(sat)","04/04(sun)","vs.レイラック滋賀FC"],
+  ["第31節","AWAY","04/10(sat)","04/11(sun)","vs.鹿児島ユナイテッドFC"],
+  ["第32節","HOME","04/17(sat)","04/18(sun)","vs.ガイナーレ鳥取"],
+  ["第33節","AWAY","04/24(sat)","04/25(sun)","vs.ツエーゲン金沢"],
+  ["第34節","HOME","04/29(thu)",null,"vs.松本山雅FC"],
+  ["第35節","AWAY","05/03(mon)","05/04(tue)","vs.愛媛FC"],
+  ["第36節","HOME","05/09(sun)",null,"vs.FC岐阜"],
+  ["第37節","AWAY","05/15(sat)","05/16(sun)","vs.AC長野パルセイロ"],
+  ["第38節","HOME","05/23(sun)",null,"vs.高知ユナイテッドSC"],
+];
+
+const STADIUM = {
+  "ガイナーレ鳥取":      "Axisバードスタジアム",
+  "AC長野パルセイロ":    "長野Uスタジアム",
+  "FC琉球":              "沖縄県総合運動公園陸上競技場",
+  "レノファ山口FC":      "維新みらいふスタジアム",
+  "松本山雅FC":          "サンプロ アルウィン",
+  "愛媛FC":              "ニンジニアスタジアム",
+  "福島ユナイテッドFC":  "とうほう・みんなのスタジアム",
+  "福島ユナイテッド":    "とうほう・みんなのスタジアム",
+  "高知ユナイテッドSC":  "高知県立春野総合運動公園陸上競技場",
+  "SC相模原":            "相模原ギオンスタジアム",
+  "ツエーゲン金沢":      "金沢ゴーゴーカレースタジアム",
+  "ギラヴァンツ北九州":  "ミクニワールドスタジアム北九州",
+  "奈良クラブ":          "ロートフィールド奈良",
+  "鹿児島ユナイテッドFC":"白波スタジアム",
+  "FC岐阜":              "岐阜メモリアルセンター長良川競技場",
+  "ロアッソ熊本":        "えがお健康スタジアム",
+  "ザスパ群馬":          "正田醤油スタジアム群馬",
+  "レイラック滋賀FC":    "平和堂HATOスタジアム",
+  "カマタマーレ讃岐":    "四国化成MEGLIOスタジアム",
+  "栃木SC":              "カンセキスタジアムとちぎ",
+};
+
+function getMonth(d) {
+  const m = d.match(/^(\d{2})\//);
+  return m ? m[1] + '月' : '';
+}
+
+// 月グループ化
+const groups = new Map();
+DATA.forEach(row => {
+  const mo = getMonth(row[2]);
+  if (!groups.has(mo)) groups.set(mo, []);
+  groups.get(mo).push(row);
+});
+
+const sched = document.getElementById('sched');
+
+groups.forEach((rows, mo) => {
+  const block = document.createElement('div');
+  block.className = 'month-block';
+
+  const hd = document.createElement('div');
+  hd.className = 'month-hd';
+  hd.textContent = '── ' + mo;
+  block.appendChild(hd);
+
+  rows.forEach(([num, ha, d1, d2, opp]) => {
+    const isH = ha === 'HOME';
+    const cls = isH ? 'h' : 'a';
+    const numOnly = num.replace('第','').replace('節','');
+    const teamName = opp.replace('vs.', '');
+    const stadium = !isH ? (STADIUM[teamName] || '') : '';
+
+    const card = document.createElement('div');
+    card.className = `card ${cls}`;
+    card.innerHTML = `
+      <div class="card-bar"></div>
+      <div class="card-inner">
+        <div class="card-meta">
+          <div class="node-label">第</div>
+          <div class="node-num">${numOnly}</div>
+          <div class="node-label">節</div>
+          <div class="ha ${cls}">${ha}</div>
+        </div>
+        <div class="vsep"></div>
+        <div class="card-date">
+          <div class="d1">${d1}</div>
+          ${d2 ? `<div class="d2-row"><span class="d-or">or</span><span class="d2">${d2}</span></div>` : ''}
+        </div>
+        <div class="card-opp">
+          <div>${opp}</div>
+          ${stadium ? `<a class="card-stadium" href="https://www.google.com/maps/search/${encodeURIComponent(stadium)}" target="_blank" rel="noopener">📍 ${stadium}</a>` : ''}
+        </div>
+      </div>`;
+    block.appendChild(card);
+  });
+
+  sched.appendChild(block);
+});
+</script>
+</body>
+</html>
