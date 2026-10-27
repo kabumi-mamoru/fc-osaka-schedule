@@ -153,7 +153,7 @@ html, body {
 .card-inner {
   flex: 1;
   display: grid;
-  grid-template-columns: 52px 1px 108px 1fr;
+  grid-template-columns: 52px 1px 118px 1fr;
   align-items: center;
   padding: 11px 12px 11px 10px;
   gap: 10px;
@@ -286,6 +286,57 @@ html, body {
   color: var(--cyan);
   letter-spacing: 3px;
 }
+
+/* ─── RECORD / RESULT ─── */
+.record {
+  margin-top: 10px;
+  font-family: 'Oswald', 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--silver);
+}
+.record b { color: #fff; font-weight: 700; }
+.record .pt { color: var(--cyan); }
+
+.opp-name { white-space: normal; overflow-wrap: anywhere; }
+.result { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.res-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 20px; height: 20px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+}
+.res-badge.w { background: var(--cyan); color: #000E2A; }
+.res-badge.d { background: #8A9BB8;     color: #000E2A; }
+.res-badge.l { background: var(--red);  color: #fff; }
+.res-score {
+  font-family: 'Oswald', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
+}
+.next-pill {
+  display: block;
+  width: fit-content;
+  margin-top: 4px;
+  margin-bottom: 2px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--cyan);
+  border: 1px solid rgba(0,212,255,0.5);
+  border-radius: 10px;
+  padding: 1px 8px;
+}
+.card.done .card-meta,
+.card.done .card-date,
+.card.done .opp-name { opacity: 0.65; }
+.card.next .card-inner { box-shadow: inset 0 0 0 1px rgba(0,212,255,0.35); }
 </style>
 </head>
 <body>
@@ -297,6 +348,7 @@ html, body {
   </div>
   <a class="title" href="https://www.fc-osaka.com/" target="_blank" rel="noopener">FC <em>OSAKA</em></a>
   <div class="subtitle">2026/27 &nbsp; MATCH SCHEDULE</div>
+  <div class="record" id="record"></div>
 </div>
 
 <div class="legend">
@@ -313,47 +365,62 @@ html, body {
 </div>
 
 <script>
-// [節, H/A, 日付1, 日付2orNull, 対戦相手, 時間orNull, 会場(AWAYは相手ホーム・HOMEは通常null/会場override)]
+// [節, H/A, 日付1, 日付2orNull, 対戦相手, KO時間orNull, 会場(AWAYは相手ホーム/HOMEは通常null・変更時のみ指定), スコアorNull(FC大阪側が先 例:"2-1")]
 const DATA = [
-  ["第01節","AWAY","08/08(土)",null,"vs.ガイナーレ鳥取","19:00","Axisバードスタジアム"],
-  ["第02節","HOME","08/16(日)",null,"vs.AC長野パルセイロ","18:00",null],
-  ["第03節","HOME","08/22(土)",null,"vs.FC琉球","18:00","ミクニワールドスタジアム北九州"],
-  ["第04節","AWAY","08/30(日)",null,"vs.レノファ山口FC","19:00","維新みらいふスタジアム"],
-  ["第05節","AWAY","09/05(土)",null,"vs.松本山雅FC","18:00","サンプロ アルウィン"],
-  ["第06節","HOME","09/14(月)",null,"vs.愛媛FC","19:00",null],
-  ["第07節","HOME","09/18(金)",null,"vs.福島ユナイテッドFC","19:00",null],
-  ["第08節","AWAY","09/26(土)",null,"vs.高知ユナイテッドSC","17:00","高知県立春野総合運動公園陸上競技場"],
-  ["第09節","AWAY","10/03(土)",null,"vs.SC相模原","17:00","相模原ギオンスタジアム"],
-  ["第10節","HOME","10/09(金)",null,"vs.ツエーゲン金沢","19:00","たけびしスタジアム京都"],
-  ["第11節","AWAY","10/17(土)",null,"vs.ギラヴァンツ北九州","14:00","ミクニワールドスタジアム北九州"],
-  ["第12節","HOME","10/21(水)",null,"vs.奈良クラブ","19:00",null],
-  ["第13節","HOME","10/24(土)",null,"vs.鹿児島ユナイテッドFC","14:00",null],
-  ["第14節","AWAY","10/31(土)",null,"vs.FC岐阜","14:00","岐阜メモリアルセンター長良川競技場"],
-  ["第15節","HOME","11/03(火・祝)","","vs.ロアッソ熊本",null,null],
-  ["第16節","AWAY","11/07(土)",null,"vs.ザスパ群馬","14:00","正田醤油スタジアム群馬"],
-  ["第17節","AWAY","11/15(日)",null,"vs.レイラック滋賀FC","18:00","平和堂HATOスタジアム"],
-  ["第18節","HOME","11/22(日)",null,"vs.カマタマーレ讃岐","15:00",null],
-  ["第19節","HOME","11/25(水)",null,"vs.栃木SC","19:00",null],
-  ["第20節","AWAY","11/29(日)",null,"vs.ロアッソ熊本","13:00","えがお健康スタジアム"],
-  ["第21節","AWAY","12/06(日)",null,"vs.奈良クラブ","14:00","ロートフィールド奈良"],
-  ["第22節","HOME","12/12(土)","12/13(日)","vs.SC相模原",null,null],
-  ["第23節","HOME","02/20(土)","02/21(日)","vs.ギラヴァンツ北九州",null,null],
-  ["第24節","AWAY","02/27(土)","02/28(日)","vs.カマタマーレ讃岐",null,"四国化成MEGLIOスタジアム"],
-  ["第25節","HOME","03/06(土)","03/07(日)","vs.レノファ山口FC",null,null],
-  ["第26節","AWAY","03/13(土)","03/14(日)","vs.FC琉球",null,"沖縄県総合運動公園陸上競技場"],
-  ["第27節","AWAY","03/17(水)",null,"vs.福島ユナイテッド",null,"とうほう・みんなのスタジアム"],
-  ["第28節","HOME","03/20(土)","03/21(日)","vs.ザスパ群馬",null,null],
-  ["第29節","AWAY","03/27(土)","03/28(日)","vs.栃木SC",null,"カンセキスタジアムとちぎ"],
-  ["第30節","HOME","04/03(土)","04/04(日)","vs.レイラック滋賀FC",null,null],
-  ["第31節","AWAY","04/10(土)","04/11(日)","vs.鹿児島ユナイテッドFC",null,"白波スタジアム"],
-  ["第32節","HOME","04/17(土)","04/18(日)","vs.ガイナーレ鳥取",null,null],
-  ["第33節","AWAY","04/24(土)","04/25(日)","vs.ツエーゲン金沢",null,"金沢ゴーゴーカレースタジアム"],
-  ["第34節","HOME","04/29(木)",null,"vs.松本山雅FC",null,null],
-  ["第35節","AWAY","05/03(月)","05/04(火)","vs.愛媛FC",null,"ニンジニアスタジアム"],
-  ["第36節","HOME","05/09(日)",null,"vs.FC岐阜",null,null],
-  ["第37節","AWAY","05/15(土)","05/16(日)","vs.AC長野パルセイロ",null,"長野Uスタジアム"],
-  ["第38節","HOME","05/23(日)",null,"vs.高知ユナイテッドSC",null,null],
+  ["第01節","AWAY","08/08(土)",null,"vs.ガイナーレ鳥取","19:00","Axisバードスタジアム","1-1"],
+  ["第02節","HOME","08/16(日)",null,"vs.AC長野パルセイロ","18:00",null,"4-2"],
+  ["第03節","HOME","08/22(土)",null,"vs.FC琉球","18:00","ミクニワールドスタジアム北九州","2-2"],
+  ["第04節","AWAY","08/30(日)",null,"vs.レノファ山口FC","19:00","維新みらいふスタジアム","0-0"],
+  ["第05節","AWAY","09/05(土)",null,"vs.松本山雅FC","18:00","サンプロ アルウィン","0-0"],
+  ["第06節","HOME","09/14(月)",null,"vs.愛媛FC","19:00",null,"2-1"],
+  ["第07節","HOME","09/18(金)",null,"vs.福島ユナイテッドFC","19:00",null,"4-1"],
+  ["第08節","AWAY","09/26(土)",null,"vs.高知ユナイテッドSC","17:00","高知県立春野総合運動公園陸上競技場","4-0"],
+  ["第09節","AWAY","10/03(土)",null,"vs.SC相模原","17:00","相模原ギオンスタジアム","0-1"],
+  ["第10節","HOME","10/09(金)",null,"vs.ツエーゲン金沢","19:00","たけびしスタジアム京都","1-1"],
+  ["第11節","AWAY","10/17(土)",null,"vs.ギラヴァンツ北九州","14:00","ミクニワールドスタジアム北九州","1-3"],
+  ["第12節","HOME","10/21(水)",null,"vs.奈良クラブ","19:00",null,"2-0"],
+  ["第13節","HOME","10/24(土)",null,"vs.鹿児島ユナイテッドFC","14:00",null,"2-1"],
+  ["第14節","AWAY","10/31(土)",null,"vs.FC岐阜","14:00","岐阜メモリアルセンター長良川競技場",null],
+  ["第15節","HOME","11/04(水)",null,"vs.ロアッソ熊本","14:00","万博記念競技場",null],
+  ["第16節","AWAY","11/07(土)",null,"vs.ザスパ群馬","14:00","正田醤油スタジアム群馬",null],
+  ["第17節","AWAY","11/15(日)",null,"vs.レイラック滋賀FC","18:00","平和堂HATOスタジアム",null],
+  ["第18節","HOME","11/22(日)",null,"vs.カマタマーレ讃岐","15:00",null,null],
+  ["第19節","HOME","11/25(水)",null,"vs.栃木SC","19:00",null,null],
+  ["第20節","AWAY","11/29(日)",null,"vs.ロアッソ熊本","13:00","えがお健康スタジアム",null],
+  ["第21節","AWAY","12/06(日)",null,"vs.奈良クラブ","14:00","ロートフィールド奈良",null],
+  ["第22節","HOME","12/12(土)","12/13(日)","vs.SC相模原",null,null,null],
+  ["第23節","HOME","02/20(土)","02/21(日)","vs.ギラヴァンツ北九州",null,null,null],
+  ["第24節","AWAY","02/27(土)","02/28(日)","vs.カマタマーレ讃岐",null,"四国化成MEGLIOスタジアム",null],
+  ["第25節","HOME","03/06(土)","03/07(日)","vs.レノファ山口FC",null,null,null],
+  ["第26節","AWAY","03/13(土)","03/14(日)","vs.FC琉球",null,"沖縄県総合運動公園陸上競技場",null],
+  ["第27節","AWAY","03/17(水)",null,"vs.福島ユナイテッド",null,"とうほう・みんなのスタジアム",null],
+  ["第28節","HOME","03/20(土)","03/21(日)","vs.ザスパ群馬",null,null,null],
+  ["第29節","AWAY","03/27(土)","03/28(日)","vs.栃木SC",null,"カンセキスタジアムとちぎ",null],
+  ["第30節","HOME","04/03(土)","04/04(日)","vs.レイラック滋賀FC",null,null,null],
+  ["第31節","AWAY","04/10(土)","04/11(日)","vs.鹿児島ユナイテッドFC",null,"白波スタジアム",null],
+  ["第32節","HOME","04/17(土)","04/18(日)","vs.ガイナーレ鳥取",null,null,null],
+  ["第33節","AWAY","04/24(土)","04/25(日)","vs.ツエーゲン金沢",null,"金沢ゴーゴーカレースタジアム",null],
+  ["第34節","HOME","04/29(木)",null,"vs.松本山雅FC",null,null,null],
+  ["第35節","AWAY","05/03(月)","05/04(火)","vs.愛媛FC",null,"ニンジニアスタジアム",null],
+  ["第36節","HOME","05/09(日)",null,"vs.FC岐阜",null,null,null],
+  ["第37節","AWAY","05/15(土)","05/16(日)","vs.AC長野パルセイロ",null,"長野Uスタジアム",null],
+  ["第38節","HOME","05/23(日)",null,"vs.高知ユナイテッドSC",null,null,null],
 ];
+
+const RES_LABEL = { w: '勝', d: '分', l: '負' };
+function parseScore(s) {
+  if (!s) return null;
+  const [a, b] = s.split('-').map(Number);
+  return { a, b, r: a > b ? 'w' : a < b ? 'l' : 'd' };
+}
+
+// 成績集計 & 次の試合
+const cnt = { w: 0, d: 0, l: 0 };
+let played = 0;
+DATA.forEach(r => { const p = parseScore(r[7]); if (p) { cnt[p.r]++; played++; } });
+const nextRow = DATA.find(r => !r[7]);
+document.getElementById('record').innerHTML =
+  `<b>${cnt.w}</b>勝 <b>${cnt.d}</b>分 <b>${cnt.l}</b>敗 ｜ <span class="pt">勝点 <b>${cnt.w * 3 + cnt.d}</b></span> ｜ ${played}/${DATA.length}節`;
 
 function getMonth(d) {
   const m = d.match(/^(\d{2})\//);
@@ -379,7 +446,12 @@ groups.forEach((rows, mo) => {
   hd.textContent = '── ' + mo;
   block.appendChild(hd);
 
-  rows.forEach(([num, ha, d1, d2, opp, time, venue]) => {
+  rows.forEach(row => {
+    const [num, ha, d1, d2, opp, time, venue, score] = row;
+    const p = parseScore(score);
+    const tag = p
+      ? `<span class="result"><span class="res-badge ${p.r}">${RES_LABEL[p.r]}</span><span class="res-score">${p.a}-${p.b}</span></span>`
+      : (row === nextRow ? '<span class="next-pill">NEXT</span>' : '');
     const isH = ha === 'HOME';
     const cls = isH ? 'h' : 'a';
     const numOnly = num.replace('第','').replace('節','');
@@ -387,7 +459,7 @@ groups.forEach((rows, mo) => {
     const stadium = venue || '';
 
     const card = document.createElement('div');
-    card.className = `card ${cls}`;
+    card.className = `card ${cls}${p ? ' done' : ''}${row === nextRow ? ' next' : ''}`;
     card.innerHTML = `
       <div class="card-bar"></div>
       <div class="card-inner">
@@ -404,7 +476,7 @@ groups.forEach((rows, mo) => {
           ${time ? `<div class="d-time">🕐 ${time} KO</div>` : ''}
         </div>
         <div class="card-opp">
-          <div>${opp}</div>
+          <div class="opp-name">${opp}</div>${tag}
           ${stadium ? `<a class="card-stadium" href="https://www.google.com/maps/search/${encodeURIComponent(stadium)}" target="_blank" rel="noopener">📍 ${stadium}</a>` : ''}
         </div>
       </div>`;
